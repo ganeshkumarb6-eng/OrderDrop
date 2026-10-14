@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+/* Hide scrollbars for category nav and horizontal scroll */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Print optimizations for Table Standee cards */
+@media print {
+  body {
+    background-color: white !important;
+  }
+  header, footer, nav, button {
+    display: none !important;
+  }
+}

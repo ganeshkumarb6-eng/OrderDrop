@@ -1,0 +1,6 @@
+{
+  "name": "QuickMenu - WhatsApp Food Menu & Order SaaS",
+  "description": "Instant digital visual food menu builder for home bakers, cloud kitchens, and small food businesses in India. Route customer orders directly to WhatsApp with automated bill summaries and QR codes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
