@@ -20,6 +20,7 @@ export interface MenuItem {
 export interface StoreProfile {
   id: string;
   slug: string;
+  ownerId?: string; // Links store to a merchant account
   businessType: BusinessType;
   businessName: string;
   whatsappNumber: string; // e.g. "+91 98490 12345"
@@ -31,6 +32,14 @@ export interface StoreProfile {
   deliveryNote?: string;
   items: MenuItem[];
   updatedAt: string;
+}
+
+export interface MerchantUser {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  createdAt: string;
 }
 
 export interface CartItem {

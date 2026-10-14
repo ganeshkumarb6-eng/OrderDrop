@@ -17,10 +17,12 @@ import {
   Zap,
   Printer,
   Download,
-  Camera
+  Camera,
+  LogOut,
+  User as UserIcon
 } from 'lucide-react';
 import QRCode from 'qrcode';
-import { MenuItem, StoreProfile, BusinessType } from '../../types';
+import { MenuItem, StoreProfile, BusinessType, MerchantUser } from '../../types';
 import { VegBadge } from '../common/VegBadge';
 import { MenuItemModal } from './MenuItemModal';
 import { QRCodeModal } from './QRCodeModal';
@@ -36,6 +38,11 @@ interface MerchantDashboardProps {
   onUpdateStore: (updated: StoreProfile) => void;
   onOpenCustomerView: () => void;
   publicUrl: string;
+  user?: MerchantUser | null;
+  onLogout?: () => void;
+  userStores?: StoreProfile[];
+  onSelectStore?: (store: StoreProfile) => void;
+  onCreateNewStore?: () => void;
 }
 
 export const MerchantDashboard: React.FC<MerchantDashboardProps> = ({
@@ -43,6 +50,11 @@ export const MerchantDashboard: React.FC<MerchantDashboardProps> = ({
   onUpdateStore,
   onOpenCustomerView,
   publicUrl,
+  user,
+  onLogout,
+  userStores = [],
+  onSelectStore,
+  onCreateNewStore,
 }) => {
   const [isItemModalOpen, setIsItemModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
@@ -206,7 +218,7 @@ Flat 101, Green View Apartments, Bangalore
       {/* Top Header */}
       <header className="bg-white border-b border-neutral-200/80 sticky top-0 z-20 shadow-2xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-black text-base shadow-xs">
               Q
             </div>
@@ -220,13 +232,34 @@ Flat 101, Green View Apartments, Bangalore
                 </span>
               </div>
             </div>
+
+            {/* Store Switcher (if user has stores) */}
+            {userStores.length > 1 && onSelectStore && (
+              <div className="hidden md:flex items-center gap-1.5 ml-2 border-l border-neutral-200 pl-3">
+                <span className="text-[11px] text-neutral-400 font-bold uppercase">Store:</span>
+                <select
+                  value={store.id}
+                  onChange={(e) => {
+                    const chosen = userStores.find((s) => s.id === e.target.value);
+                    if (chosen) onSelectStore(chosen);
+                  }}
+                  className="text-xs font-bold text-neutral-900 bg-stone-100 rounded-lg px-2 py-1 border border-neutral-200 cursor-pointer"
+                >
+                  {userStores.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.businessName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={onOpenCustomerView}
-              className="px-3.5 py-1.5 rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-800 font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+              className="px-3 py-1.5 rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-800 font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               <Eye className="w-3.5 h-3.5 text-emerald-700" />
               <span>Preview Menu</span>
@@ -234,14 +267,39 @@ Flat 101, Green View Apartments, Bangalore
             <button
               type="button"
               onClick={() => setIsStandeeModalOpen(true)}
-              className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
+              className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5" />
               <span>Print Standee</span>
             </button>
+
+            {/* Logged in User Profile & Logout */}
+            {user && (
+              <div className="flex items-center gap-1.5 border-l border-neutral-200 pl-2 ml-1">
+                <div className="hidden lg:flex flex-col text-right">
+                  <span className="text-xs font-bold text-neutral-900 leading-tight truncate max-w-[120px]">
+                    {user.name}
+                  </span>
+                  <span className="text-[10px] text-neutral-400 truncate max-w-[120px]">
+                    {user.phone || user.email}
+                  </span>
+                </div>
+                {onLogout && (
+                  <button
+                    type="button"
+                    onClick={onLogout}
+                    className="p-1.5 rounded-xl text-neutral-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                    title="Sign Out"
+                  >
+                    <LogOut className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </header>
+
 
       {/* Workspace */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
